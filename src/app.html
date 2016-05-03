@@ -1,0 +1,12 @@
+<template>
+  <require from="nav-bar.html"></require>
+  <require from="bootstrap/css/bootstrap.css"></require>
+  <script src="./midi/Base64binary.js" type="text/javascript"></script>
+  <script src="./midi/MIDI.min.js" type="text/javascript"></script>
+
+  <nav-bar router.bind="router"></nav-bar>
+
+  <div class="page-host">
+    <router-view></router-view>
+  </div>
+</template>
