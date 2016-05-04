@@ -15,7 +15,7 @@ export class Piano {
     { note: 'B', number: 11, flat: true},
   ];
 
-  @bindable octaveNumber = 4;
+  @bindable firstOctave = 4;
   @bindable noteName = 'C';
   @bindable numberOfNotes = 7
 
@@ -24,7 +24,7 @@ export class Piano {
   }
 
   attached() {
-     this.piano = this.buildPiano(this.octaveNumber, this.noteName, this.numberOfNotes);
+     this.piano = this.buildPiano(this.firstOctave, this.noteName, this.numberOfNotes);
      this.subscribe();
   }
 
@@ -82,7 +82,7 @@ export class Piano {
     }
   }
 
-  buildPiano(octaveNumber, noteName, numberOfNotes) {
+  buildPiano(firstOctave, noteName, numberOfNotes) {
     let noteNumber = undefined;
     for (var i = 0; i < this.octave.length; i++) {
       if (this.octave[i].note === noteName) {
@@ -93,11 +93,11 @@ export class Piano {
     if (noteNumber === undefined) {
       console.log("Invalid note name " + noteName);
     }
-    if (octaveNumber > 8 || octaveNumber < 0) {
+    if (firstOctave > 8 || firstOctave < 0) {
       console.log("Octave number mst be between 0 and 8");
     }
 
-    const firstNote = 7 * octaveNumber + noteNumber;
+    const firstNote = 7 * firstOctave + noteNumber;
     const lastNote = firstNote + numberOfNotes - 1;
 
     let piano = [];
@@ -105,9 +105,9 @@ export class Piano {
     for (let n = firstNote; n <= lastNote; n++) {
       let note = { ...this.octave[n % 7]};
       if (note.note === 'C' && n != firstNote) {
-        octaveNumber++;
+        firstOctave++;
       }
-      note.number += octaveNumber * 12 + 12;
+      note.number += firstOctave * 12 + 12;
       if (note.flat) {
         note.flatNote = this.octave[(n-1) % 7].note + '#'
       }
