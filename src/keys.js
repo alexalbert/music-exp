@@ -1,7 +1,7 @@
 //import {computedFrom} from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {NoteInfo} from './messages';
+import {NoteInfo, Action} from './messages';
 
 @inject(EventAggregator)
 export class Chords {
@@ -10,7 +10,7 @@ export class Chords {
     {name: 'Minor', notes: [2, 3, 5, 7, 8, 10]},
   ];
 
-  playNotes = true;
+  playNotes = false;
 
   heading = 'Keys';
 
@@ -18,12 +18,19 @@ export class Chords {
     this.eventAggregator = eventAggregator;
     this.selectedKey = this.keys[0];
     this.keys[0].selected = true;
-    this.subscribe();
+  }
+
+  attached() {
+    this.subscription = this.subscribe();
+  }
+
+  detached() {
+    this.subscription.dispose();
   }
 
   subscribe() {
-    this.eventAggregator.subscribe(NoteInfo, notes => {
-      if (notes.actions.includes('picked')) {
+    return this.eventAggregator.subscribe(NoteInfo, notes => {
+      if (notes.actions.includes(Action.picked)) {
         this.root = notes.notes[0];
         this.showKey(this.root);
         if (this.playNotes) {
@@ -44,13 +51,13 @@ export class Chords {
     let notes = this.compose(16);
     let noteInfo = new NoteInfo();
     noteInfo.notes = notes;
-    noteInfo.actions = ['play'];
+    noteInfo.actions = [Action.play];
     this.eventAggregator.publish(noteInfo);
   }
 
   showKey(root) {
     let notes = this.getKeyNotes(root);
-    notes.actions = ['activate'];
+    notes.actions = [Action.activate];
     this.eventAggregator.publish(notes);
   }
 

@@ -1,9 +1,7 @@
 //import {computedFrom} from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
-
 import {EventAggregator} from 'aurelia-event-aggregator';
-// import {MidiWrapper} from './midi-wrapper';
-import {NoteInfo} from './messages';
+import {NoteInfo, Action} from './messages';
 
 @inject(EventAggregator)
 export class Chords {
@@ -24,15 +22,21 @@ export class Chords {
 
   constructor(eventAggregator) {
       this.eventAggregator = eventAggregator;
-      // this.midiWrapper = midiWrapper;
       this.selectedChord = this.chordTypes[0];
       this.chordTypes[0].selected = true;
-      this.subscribe();
+  }
+
+  attached() {
+    this.subscription = this.subscribe();
+  }
+
+  detached() {
+      this.subscription.dispose();
   }
 
   subscribe() {
-     this.eventAggregator.subscribe(NoteInfo, notes => {
-       if (notes.actions.includes('picked')) {
+     return this.eventAggregator.subscribe(NoteInfo, notes => {
+       if (notes.actions.includes(Action.picked)) {
         this.root = notes.notes[0];
         this.playChord(this.root);
        }
@@ -52,7 +56,7 @@ export class Chords {
      for (let n of this.selectedChord.notes) {
        notes.push(root.number+n);
      }
-     notes.actions = ['playChord', 'activate'];
+     notes.actions = [Action.playChord, Action.activate];
      this.eventAggregator.publish(notes);
    }
 }

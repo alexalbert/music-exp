@@ -1,7 +1,7 @@
 //import {computedFrom} from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {NoteInfo} from './messages';
+import {NoteInfo, Action} from './messages';
 
 @inject(EventAggregator)
 export class Chords {
@@ -9,14 +9,20 @@ export class Chords {
 
   constructor(eventAggregator) {
       this.eventAggregator = eventAggregator;
-      this.subscribe();
+  }
+
+  attached() {
+    this.subscription = this.subscribe();
+  }
+
+  detached() {
+    this.subscription.dispose();
   }
 
   subscribe() {
-     this.eventAggregator.subscribe(NoteInfo, notes => {
-       console.log("dddddd");
-       if (notes.actions.includes('picked')) {
-         notes.actions = ['play'];
+     return this.eventAggregator.subscribe(NoteInfo, notes => {
+       if (notes.actions.includes(Action.picked)) {
+         notes.actions = [Action.play];
          this.eventAggregator.publish(notes);
        }
      });

@@ -11,3 +11,10 @@ export class NoteInfo {
       this.notes.push({number: noteNumber, name: noteName});
   }
 }
+
+export var Action = {
+  playChord : 'playChord',
+  play : 'play',
+  activate  : 'activate',
+  picked : 'picked'
+}

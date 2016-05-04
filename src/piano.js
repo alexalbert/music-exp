@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
-import {NoteInfo} from './messages';
+import {NoteInfo, Action} from './messages';
 
 @inject(EventAggregator)
 export class Piano {
@@ -25,7 +25,11 @@ export class Piano {
 
   attached() {
      this.piano = this.buildPiano(this.firstOctave, this.noteName, this.numberOfNotes);
-     this.subscribe();
+     this.subscription = this.subscribe();
+  }
+
+  detached() {
+    this.subscription.dispose();
   }
 
   // noteName(noteNumber) {
@@ -43,14 +47,14 @@ export class Piano {
   click(noteNumber, noteName) {
     console.log(noteNumber + '  ' + noteName);
     let ni = new NoteInfo(noteNumber, noteName);
-    ni.actions = ['picked'];
+    ni.actions = [Action.picked];
     this.eventAggregator.publish(ni);
   }
 
   subscribe() {
-   this.eventAggregator.subscribe(NoteInfo, notes => {
+   return this.eventAggregator.subscribe(NoteInfo, notes => {
      console.log(notes);
-     if (notes.actions.includes('activate')) {
+     if (notes.actions.includes(Action.activate)) {
        this.deactivateAll();
        this.activate(notes);
      }

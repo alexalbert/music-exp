@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {NoteInfo} from '../messages';
+import  {NoteInfo, Action} from '../messages';
 import {Container} from 'aurelia-dependency-injection';
 
 
@@ -14,10 +14,10 @@ export class MidiWrapper {
 
   subscribe() {
      this.eventAggregator.subscribe(NoteInfo, notes => {
-       if (notes.actions.includes('playChord')) {
+       if (notes.actions.includes(Action.playChord)) {
          this.playChord(notes);
        }
-       if (notes.actions.includes('play')) {
+       if (notes.actions.includes(Action.play)) {
          this.playNotes(notes);
        }
      });
