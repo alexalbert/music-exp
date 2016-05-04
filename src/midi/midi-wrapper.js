@@ -14,10 +14,23 @@ export class MidiWrapper {
 
   subscribe() {
      this.eventAggregator.subscribe(NoteInfo, notes => {
+       if (notes.actions.includes('playChord')) {
+         this.playChord(notes);
+       }
        if (notes.actions.includes('play')) {
          this.playNotes(notes);
        }
      });
+   }
+
+   playChord(notes) {
+     var delay = 0; // play one note every quarter second
+     var velocity = 127; // how hard the note hits
+     // play the note
+     MIDI.setVolume(0, 127);
+     let numbers = notes.notes.map(n => { return n.number; })
+     MIDI.chordOn(0, numbers, velocity, delay);
+     MIDI.chordOff(0, numbers, delay + 0.75);
    }
 
    playNotes(notes) {
@@ -25,9 +38,12 @@ export class MidiWrapper {
      var velocity = 127; // how hard the note hits
      // play the note
      MIDI.setVolume(0, 127);
-     for (let note of notes.notes) {
-       MIDI.noteOn(0, note.number, velocity, delay);
-       MIDI.noteOff(0, note.number, delay + 0.75);
+     console.log("-----------------------------------");
+     for (var i = 0; i < notes.notes.length; i++) {
+       let note = notes.notes[i];
+       console.log(note.start + " " + note.end);
+       MIDI.noteOn(0, note.number, velocity, note.start ? note.start : delay);
+       MIDI.noteOff(0, note.number, note.end ? note.end : delay + 0.75);
       }
    }
 }

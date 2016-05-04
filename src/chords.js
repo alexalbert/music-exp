@@ -32,9 +32,7 @@ export class Chords {
 
   subscribe() {
      this.eventAggregator.subscribe(NoteInfo, notes => {
-       console.log("dddddd");
        if (notes.actions.includes('picked')) {
-         console.log('picked');
         this.root = notes.notes[0];
         this.playChord(this.root);
        }
@@ -50,11 +48,11 @@ export class Chords {
    }
 
    playChord(root) {
-     let notes = new NoteInfo(this.root.number, this.root.name);
+     let notes = new NoteInfo(root.number, root.name);
      for (let n of this.selectedChord.notes) {
        notes.push(root.number+n);
      }
-     notes.actions = ['play', 'activate'];
+     notes.actions = ['playChord', 'activate'];
      this.eventAggregator.publish(notes);
    }
 }

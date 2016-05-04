@@ -1,0 +1,27 @@
+<template>
+  <require from="./piano"></require>
+
+  <div class="container-fluid pre-scrollable"
+  <section class="au-animate">
+    <h2>${heading}</h2>
+    <div class="row">
+      <div class="col-xs-3">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr repeat.for="key of keys"
+              click.delegate="onTypeChange($index)"
+              class ="${key.selected ? 'selected-row' : ''}">
+              <td>${key.name}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-xs-9">
+        <piano number-of-notes.bind="14"></piano>
+      </div>
+    </div>
+  </section>
+  </div>
+</template>
