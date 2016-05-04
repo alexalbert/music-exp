@@ -10,6 +10,8 @@ export class Chords {
     {name: 'Minor', notes: [2, 3, 5, 7, 8, 10]},
   ];
 
+  playNotes = true;
+
   heading = 'Keys';
 
   constructor(eventAggregator) {
@@ -24,7 +26,9 @@ export class Chords {
       if (notes.actions.includes('picked')) {
         this.root = notes.notes[0];
         this.showKey(this.root);
-        this.playComposition(this.root);
+        if (this.playNotes) {
+          this.playComposition(this.root);
+        }
       }
     });
   }
