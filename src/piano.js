@@ -102,7 +102,7 @@ export class Piano {
 
     let piano = [];
 
-    for (var n = firstNote; n <= lastNote; n++) {
+    for (let n = firstNote; n <= lastNote; n++) {
       let note = { ...this.octave[n % 7]};
       if (note.note === 'C' && n != firstNote) {
         octaveNumber++;

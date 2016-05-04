@@ -2,10 +2,10 @@
 import {inject} from 'aurelia-framework';
 
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {MidiWrapper} from './midi-wrapper';
+// import {MidiWrapper} from './midi-wrapper';
 import {NoteInfo} from './messages';
 
-@inject(EventAggregator, MidiWrapper)
+@inject(EventAggregator)
 export class Chords {
   chordTypes = [
     {name: 'Major', symbol: '', notes: [4, 7]},
@@ -17,14 +17,14 @@ export class Chords {
     {name: 'Dominant 7', symbol: '7', notes: [4, 7, 10]},
     {name: 'Minor Seventh', symbol: 'min7', notes: [3, 7, 10]},
     {name: 'Minor 7 b5', symbol: 'min7b5', notes: [3, 6, 10]},
-    {name: 'Diminiched 7', symbol: 'dim7', notes: [3, 6, 9]}
+    {name: 'Diminished 7', symbol: 'dim7', notes: [3, 6, 9]}
   ];
 
   heading = 'Chords';
 
-  constructor(eventAggregator, midiWrapper) {
+  constructor(eventAggregator) {
       this.eventAggregator = eventAggregator;
-      this.midiWrapper = midiWrapper;
+      // this.midiWrapper = midiWrapper;
       this.selectedChord = this.chordTypes[0];
       this.chordTypes[0].selected = true;
       this.subscribe();

@@ -2,16 +2,16 @@
 <template>
 	<link href="styles/piano.css" rel="stylesheet" type="text/css" />
 
-<div id="p-wrapper">
-	<ul id="piano">
-			<li repeat.for="note of piano">
-				<div class="anchor ${note.active}" click.delegate="click(note.number, note.note)" id="note.note">
-					<p>${note.note}
-				</div>
-				<span if.bind="note.flat" class="${note.flatactive}" click.delegate = "click(note.number-1, note.flatNote)" id="note.note-1">
-					<p>${note.flatNote}
-				</span>
-		  </li>
-	</ul>
-</div>
+	<div id="p-wrapper">
+		<ul id="piano" css="width: ${40*numberOfNotes}px;">
+				<li repeat.for="note of piano">
+					<div class="anchor ${note.active}" click.delegate="click(note.number, note.note)" id="note.note">
+						<p>${note.note}
+					</div>
+					<span if.bind="note.flat" class="${note.flatactive}" click.delegate = "click(note.number-1, note.flatNote)" id="note.note-1">
+						<p>${note.flatNote}
+					</span>
+			  </li>
+		</ul>
+	</div>
 </template>
