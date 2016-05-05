@@ -1,3 +1,5 @@
+import 'midi-wrapper';
+
 export class App {
   configureRouter(config, router) {
     config.title = 'Music experiments';
