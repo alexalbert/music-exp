@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
-import {NoteInfo, Action} from './messages';
+import {NoteInfo, Action} from './note-info';
 
 @inject(EventAggregator)
 export class Piano {
@@ -71,7 +71,6 @@ export class Piano {
   activate(notes) {
     for (let activeNote of notes.notes) {
       for (let note of this.piano) {
-        //console.log(number + "  " + note.number);
         if (note.number == activeNote.number) {
           note.active = "f-active";
           console.log(note.note);

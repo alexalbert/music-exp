@@ -1,7 +1,7 @@
 //import {computedFrom} from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {NoteInfo, Action} from './messages';
+import {NoteInfo, Action} from './note-info';
 
 @inject(EventAggregator)
 export class Chords {
