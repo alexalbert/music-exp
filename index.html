@@ -9,7 +9,7 @@
 
   <body aurelia-app="main">
     <div class="splash">
-      <div class="message">Aurelia Navigation Skeleton</div>
+      <div class="message">Music experiments</div>
       <i class="fa fa-spinner fa-spin"></i>
     </div>
 
@@ -18,14 +18,13 @@
     <script>
       System.import('aurelia-bootstrapper');
     </script>
-    <script src="src/midi/Base64binary.js" type="text/javascript"></script>
-    <script src="src/midi/midi.min.js" type="text/javascript"></script>
-
+    <script src="midi/Base64binary.js" type="text/javascript"></script>
+    <script src="midi/midi.min.js" type="text/javascript"></script>
     <script type="text/javascript">
 
     window.onload = function () {
     	MIDI.loadPlugin({
-    		soundfontUrl: "src/soundfont/",
+    		soundfontUrl: "midi/soundfont/",
     		instrument: "acoustic_grand_piano",
     		onprogress: function(state, progress) {
     			console.log(state, progress);
@@ -35,7 +34,6 @@
     		}
     	});
     };
-
     </script>
   </body>
 </html>
