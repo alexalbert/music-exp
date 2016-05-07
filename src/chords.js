@@ -10,10 +10,10 @@ export class Chords {
 
   constructor(eventAggregator, music) {
       this.eventAggregator = eventAggregator;
-      this.music = music;
+      this.chordTypes = music.chordTypes;;
 
-      this.selectedChord = this.music.chordTypes[0];
-      this.music.chordTypes[0].selected = true;
+      this.selectedChord = this.chordTypes[0];
+      this.chordTypes[0].selected = true;
   }
 
   attached() {
@@ -36,7 +36,7 @@ export class Chords {
    onTypeChange(index) {
      console.log(index);
      this.selectedChord.selected = false;
-     this.selectedChord = this.music.chordTypes[index];
+     this.selectedChord = this.chordTypes[index];
      this.selectedChord.selected = true;
      this.playChord(this.root);
    }
