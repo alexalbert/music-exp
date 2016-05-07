@@ -12,6 +12,7 @@ export class Chords {
 
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
+    this.music = music;
     this.keys = music.keys;
 
     this.selectedKey = 'Major';
@@ -52,20 +53,9 @@ export class Chords {
   }
 
   showKey(root) {
-    let notes = this.getKeyNotes(root);
+    let notes = this.music.getKeyNotes(root, this.selectedKey);
     notes.actions = [Action.activate];
     this.eventAggregator.publish(notes);
-  }
-
-  getKeyNotes(root) {
-    let notes = new NoteInfo();
-    console.log(this.keys);
-    console.log(this.selectedKey);
-    console.log(this.keys[this.selectedKey]);
-    for (let n of this.keys[this.selectedKey]) {
-      notes.push(root.number+n);
-    }
-    return notes;
   }
 
   getRandomNote(notes) {
@@ -73,7 +63,7 @@ export class Chords {
   }
 
   compose(length) {
-    let key = this.getKeyNotes(this.root);
+    let key = this.music.getKeyNotes(this.root, this.selectedKey);
     let notes = [{...key.notes[0]}];
     for (let i = 0; i < length-2; i++) {
       let note = {...this.getRandomNote(key.notes)};

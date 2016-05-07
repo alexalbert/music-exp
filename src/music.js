@@ -1,3 +1,5 @@
+import {NoteInfo} from './note-info';
+
 export class Music {
     // number - relative position to C in half-notes
     octave = [
@@ -47,5 +49,22 @@ export class Music {
           return note.note + '#';
         }
       }
+    }
+
+    getChord(symbol) {
+      for (chord of this.chordTypes) {
+        if (chord.symbol === symbol) {
+          return chord;
+        }
+        return undefined;
+      }
+    }
+
+    getKeyNotes(root, key) {
+      let notes = new NoteInfo();
+      for (let n of this.keys[key]) {
+        notes.push(root.number+n);
+      }
+      return notes;
     }
 }
