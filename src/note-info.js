@@ -4,7 +4,7 @@ export class NoteInfo {
 
   constructor(noteNumber, noteName) {
     if (noteNumber && noteName) {
-      this.notes = [{number: noteNumber, name: noteName}];
+      this.push(noteNumber, noteName);
     }
   }
   push(noteNumber, noteName) {

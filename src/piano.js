@@ -2,25 +2,17 @@ import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 import {NoteInfo, Action} from './note-info';
+import {Music} from './music';
 
-@inject(EventAggregator)
+@inject(EventAggregator, Music)
 export class Piano {
-  octave = [
-    { note: 'C', number: 0,  flat: false},
-    { note: 'D', number: 2,  flat: true},
-    { note: 'E', number: 4,  flat: true},
-    { note: 'F', number: 5,  flat: false},
-    { note: 'G', number: 7,  flat: true},
-    { note: 'A', number: 9,  flat: true},
-    { note: 'B', number: 11, flat: true},
-  ];
-
   @bindable firstOctave = 4;
   @bindable noteName = 'C';
   @bindable numberOfNotes = 7
 
-  constructor(eventAggregator) {
+  constructor(eventAggregator, music) {
       this.eventAggregator = eventAggregator;
+      this.music = music;
   }
 
   attached() {
@@ -31,18 +23,6 @@ export class Piano {
   detached() {
     this.subscription.dispose();
   }
-
-  // noteName(noteNumber) {
-  //   let number = noteNumber % 12;
-  //   for (note of octave) {
-  //     if (note.number == number) {
-  //       return note.note;
-  //     }
-  //     if (note.number > number) {
-  //       return note.note + '#';
-  //     }
-  //   }
-  // }
 
   click(noteNumber, noteName) {
     console.log(noteNumber + '  ' + noteName);
@@ -73,12 +53,12 @@ export class Piano {
       for (let note of this.piano) {
         if (note.number == activeNote.number) {
           note.active = "f-active";
-          console.log(note.note);
+          console.log(note.name);
           break;
         }
         if (note.flat && note.number-1 == activeNote.number) {
           note.flatactive = "f-active";
-          console.log(note.note);
+          console.log(note.name);
           break;
         }
       }
@@ -87,8 +67,8 @@ export class Piano {
 
   buildPiano(firstOctave, noteName, numberOfNotes) {
     let noteNumber = undefined;
-    for (var i = 0; i < this.octave.length; i++) {
-      if (this.octave[i].note === noteName) {
+    for (var i = 0; i < this.music.octave.length; i++) {
+      if (this.music.octave[i].name === noteName) {
         noteNumber = i;
         break;
       }
@@ -106,13 +86,13 @@ export class Piano {
     let piano = [];
 
     for (let n = firstNote; n <= lastNote; n++) {
-      let note = { ...this.octave[n % 7]};
-      if (note.note === 'C' && n != firstNote) {
+      let note = { ...this.music.octave[n % 7]};
+      if (note.name === 'C' && n != firstNote) {
         firstOctave++;
       }
       note.number += firstOctave * 12 + 12;
       if (note.flat) {
-        note.flatNote = this.octave[(n-1) % 7].note + '#'
+        note.flatName = this.music.octave[(n-1) % 7].name + '#'
       }
       piano.push(note);
     }

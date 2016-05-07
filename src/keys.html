@@ -9,10 +9,10 @@
         <div class="table-responsive">
           <table class="table">
             <tbody>
-              <tr repeat.for="key of keys"
-              click.delegate="onTypeChange($index)"
-              class ="${key.selected ? 'selected-row' : ''}">
-              <td>${key.name}</td>
+              <tr repeat.for="key of keyNames"
+              click.delegate="onTypeChange(key)"
+              class ="${key === selectedKey ? 'selected-row' : ''}">
+              <td>${key}</td>
               </tr>
             </tbody>
           </table>

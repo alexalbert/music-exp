@@ -2,22 +2,20 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {NoteInfo, Action} from './note-info';
+import {Music} from './music';
 
-@inject(EventAggregator)
+@inject(EventAggregator, Music)
 export class Chords {
-  keys = [
-    {name: 'Major', notes: [2, 4, 5, 7, 9, 11]},
-    {name: 'Minor', notes: [2, 3, 5, 7, 8, 10]},
-  ];
-
   playNotes = false;
 
   heading = 'Keys';
 
-  constructor(eventAggregator) {
+  constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
-    this.selectedKey = this.keys[0];
-    this.keys[0].selected = true;
+    this.keys = music.keys;
+
+    this.selectedKey = 'Major';
+    this.keyNames = Object.keys(this.keys);
   }
 
   attached() {
@@ -40,10 +38,8 @@ export class Chords {
     });
   }
 
-  onTypeChange(index) {
-    this.selectedKey.selected = false;
-    this.selectedKey = this.keys[index];
-    this.selectedKey.selected = true;
+  onTypeChange(key) {
+    this.selectedKey = key;
     this.showKey(this.root);
   }
 
@@ -62,8 +58,11 @@ export class Chords {
   }
 
   getKeyNotes(root) {
-    let notes = new NoteInfo(root.number, root.name);
-    for (let n of this.selectedKey.notes) {
+    let notes = new NoteInfo();
+    console.log(this.keys);
+    console.log(this.selectedKey);
+    console.log(this.keys[this.selectedKey]);
+    for (let n of this.keys[this.selectedKey]) {
       notes.push(root.number+n);
     }
     return notes;
