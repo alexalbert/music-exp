@@ -1,7 +1,7 @@
 <template>
   <require from="./piano"></require>
 
-  <div class="container-fluid pre-scrollable"
+  <div class="container-fluid"
   <section class="au-animate">
     <h2>${heading}</h2>
     <div class="row">
@@ -13,18 +13,28 @@
               click.delegate="onTypeChange(key)"
               class ="${key === selectedKey ? 'selected-row' : ''}">
               <td>${key}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="checkbox">
-          <label><input type="checkbox" checked.bind="playNotes"/>Play random notes from the key</label>
-        </div>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="col-xs-9">
-        <piano number-of-notes.bind="14"></piano>
+      <div class="checkbox">
+        <label><input type="checkbox" checked.bind="playNotes"/>Play random notes from the key</label>
       </div>
     </div>
-  </section>
+    <div class="col-xs-9">
+      <div>
+        <piano number-of-notes.bind="14"></piano>
+      </div>
+      <div>
+        <h3>Diatonic triads</h3>
+        <div class="btn-toolbar">
+            <label repeat.for="triad of triads" type="button" class="btn btn-primary" click.delegate="playTriad(triad.number, triad.chord)">
+              ${triad.name + triad.chord}
+            </label>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
+</div>
 </template>

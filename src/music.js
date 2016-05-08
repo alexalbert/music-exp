@@ -41,30 +41,60 @@ export class Music {
 
     noteName(noteNumber) {
       let number = noteNumber % 12;
-      for (note of this.octave) {
+      for (let note of this.octave) {
         if (note.number == number) {
-          return note.note;
+          return note.name;
         }
         if (note.number > number) {
-          return note.note + '#';
+          return note.name + '#';
         }
       }
     }
 
     getChord(symbol) {
-      for (chord of this.chordTypes) {
+      for (let chord of this.chordTypes) {
         if (chord.symbol === symbol) {
           return chord;
         }
-        return undefined;
       }
-    }
+      return undefined;
+  }
 
-    getKeyNotes(root, key) {
+    getKeyNotes(rootNumber, key) {
       let notes = new NoteInfo();
       for (let n of this.keys[key]) {
-        notes.push(root.number+n);
+        notes.push(rootNumber+n);
       }
       return notes;
+    }
+
+    getChordNotes(rootNumber, chordSymbol) {
+      let notes = new NoteInfo();
+      let chord = this.getChord(chordSymbol);
+      for (let n of chord.notes) {
+        notes.push(rootNumber+n);
+      }
+      return notes;
+    }
+
+    // Returns NoteInfo
+    getTriads(triadRoot, key) {
+      let notes = this.getKeyNotes(triadRoot.number, key).notes;
+      let triads = [];
+      for (let i = 0; i < notes.length; i++) {
+        let chordRoot = notes[i];
+        let chordSymbol =this.triads[key][i];
+        let chord = this.getChord(chordSymbol);
+        let chordNotes = new NoteInfo();
+        for (let n of chord.notes) {
+          let aa = typeof(chordRoot.number);
+          let number = chordRoot.number + n;
+          let name = this.noteName(number);
+          chordNotes.push(number, name);
+        }
+
+        triads.push({name: this.noteName(chordRoot.number), number: chordRoot.number, chord: chordSymbol, notes: chordNotes});
+      }
+      return triads;
     }
 }

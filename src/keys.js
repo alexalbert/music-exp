@@ -30,7 +30,8 @@ export class Chords {
   subscribe() {
     return this.eventAggregator.subscribe(NoteInfo, notes => {
       if (notes.actions.includes(Action.picked)) {
-        this.root = notes.notes[0];
+        this.root = {...notes.notes[0]};
+        this.triads = this.music.getTriads(this.root, this.selectedKey);
         this.showKey(this.root);
         if (this.playNotes) {
           this.playComposition(this.root);
@@ -41,6 +42,7 @@ export class Chords {
 
   onTypeChange(key) {
     this.selectedKey = key;
+    this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.showKey(this.root);
   }
 
@@ -53,7 +55,7 @@ export class Chords {
   }
 
   showKey(root) {
-    let notes = this.music.getKeyNotes(root, this.selectedKey);
+    let notes = this.music.getKeyNotes(root.number, this.selectedKey);
     notes.actions = [Action.activate];
     this.eventAggregator.publish(notes);
   }
@@ -63,7 +65,7 @@ export class Chords {
   }
 
   compose(length) {
-    let key = this.music.getKeyNotes(this.root, this.selectedKey);
+    let key = this.music.getKeyNotes(this.root.number, this.selectedKey);
     let notes = [{...key.notes[0]}];
     for (let i = 0; i < length-2; i++) {
       let note = {...this.getRandomNote(key.notes)};
@@ -79,5 +81,11 @@ export class Chords {
       note.end = delay;
     }
     return notes;
+  }
+
+  playTriad(root, chord) {
+    let notes = this.music.getChordNotes(root, chord);
+    notes.actions = [Action.activate, Action.play];
+    this.eventAggregator.publish(notes);
   }
 }
