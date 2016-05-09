@@ -39,16 +39,31 @@ export class Music {
       "Minor" : ['m', 'dim', '', 'm', 'm', '', ''],
     };
 
+    chordLeading = {
+      1: [1,2,3,4,5,6,7],
+      2: [4,5,7],
+      3: [2,4,6],
+      4: [1,3,5,7],
+      5: [1],
+      6: [2,4,5,1],
+      7: [1,3]
+    }
+
     noteName(noteNumber) {
       let number = noteNumber % 12;
+      let name = '';
       for (let note of this.octave) {
         if (note.number == number) {
-          return note.name;
+          name = note.name;
+          break;
         }
         if (note.number > number) {
-          return note.name + '#';
+          name = prevName + '#'; // '\u266D';
+          break;
         }
+        let prevName = note.name;
       }
+      return name;
     }
 
     getChord(symbol) {
@@ -77,7 +92,7 @@ export class Music {
       return notes;
     }
 
-    // Returns NoteInfo
+    // Returns [{name:, number;, chord:, notes}]
     getTriads(triadRoot, key) {
       let notes = this.getKeyNotes(triadRoot.number, key).notes;
       let triads = [];
@@ -87,7 +102,6 @@ export class Music {
         let chord = this.getChord(chordSymbol);
         let chordNotes = new NoteInfo();
         for (let n of chord.notes) {
-          let aa = typeof(chordRoot.number);
           let number = chordRoot.number + n;
           let name = this.noteName(number);
           chordNotes.push(number, name);
@@ -96,5 +110,9 @@ export class Music {
         triads.push({name: this.noteName(chordRoot.number), number: chordRoot.number, chord: chordSymbol, notes: chordNotes});
       }
       return triads;
+    }
+
+    getNextTriadNumbers(triadNumber) {
+      return this.chordLeading[triadNumber];
     }
 }
