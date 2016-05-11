@@ -28,13 +28,27 @@
       <div>
         <h3>Diatonic triads</h3>
         <div class="btn-toolbar">
-            <label repeat.for="triad of triads" type="button" class="btn btn-primary" click.delegate="playTriad(triad.number, triad.chord)">
-              ${triad.name + triad.chord}
+          <label repeat.for="triad of triads" type="button" class="btn btn-primary btn-md" click.delegate="clickedTriad(triad.number, triad.chord, $index)">
+            ${triadSymbols[$index]}<br>${triad.name + triad.chord}
+          </label>
+        </div>
+      </div>
+      <div>
+        <h3>Chord leading</h3>
+        <div class="row">
+          <div class="col-xs-2" repeat.for="chords of leading">
+            <div class="btn-group-vertical" data-toggle="buttons">
+              <label class="btn btn-default vertical-space" repeat.for="triad of chords.triads"
+              click.delegate="leadingClick($parent.$index, $index)">
+              <input  type="radio">${triad}
             </label>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+</div>
 </section>
 </div>
 </template>

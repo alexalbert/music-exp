@@ -10,6 +10,8 @@ export class Chords {
 
   heading = 'Keys';
 
+  chordLeading = [];
+
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
     this.music = music;
@@ -31,8 +33,7 @@ export class Chords {
     return this.eventAggregator.subscribe(NoteInfo, notes => {
       if (notes.actions.includes(Action.picked)) {
         this.root = {...notes.notes[0]};
-        this.triads = this.music.getTriads(this.root, this.selectedKey);
-        this.showKey(this.root);
+        this.setKeyAndRoot();
         if (this.playNotes) {
           this.playComposition(this.root);
         }
@@ -42,7 +43,12 @@ export class Chords {
 
   onTypeChange(key) {
     this.selectedKey = key;
+    this.setKeyAndRoot();
+  }
+
+  setKeyAndRoot() {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
+    this.triadSymbols = this.music.triadSymbols[this.selectedKey];
     this.showKey(this.root);
   }
 
@@ -83,9 +89,49 @@ export class Chords {
     return notes;
   }
 
+  clickedTriad(root, chord, index) {
+    this.playTriad(root, chord);
+    this.resetLeading(index);
+  }
+
+  leadingClick(index1, index2) {
+     console.log(index1 + " " + index2);
+     // Max 6 chords
+     if (index1 < 5) {
+       this.nextLeading(index1, index2);
+    }
+  }
+
+  resetLeading(index) {
+    this.leading = [];
+    this.leading.push(
+      {selected: 0, triads: [this.triads[index].name + this.triads[index].chord]});
+    this.nextLeading(0, index);
+  }
+
+  nextLeading(index1, index2) {
+
+    let nextChordNumbers = this.music.getNextTriadNumbers(index2);
+    let nextChords = [];
+    for (let chordIndex in nextChordNumbers) {
+      nextChords.push(this.triads[chordIndex].name + this.triads[chordIndex].chord);
+    }
+    this.leading.splice(index1+1);
+    this.leading.push({selected: 2, triads: nextChords});
+  }
+
   playTriad(root, chord) {
     let notes = this.music.getChordNotes(root, chord);
     notes.actions = [Action.activate, Action.play];
     this.eventAggregator.publish(notes);
+  }
+
+  getChordLeading(triadNumber) {
+    nextTriads = [];
+    nextTriadNumbers = this.music.getNextTriadNumbers(triad)
+    for (i of nextTriadNumbers) {
+      nextTriads.push(this.triads[i+1]);
+    }
+    return nextTriad;
   }
 }

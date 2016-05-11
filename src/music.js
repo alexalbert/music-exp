@@ -39,6 +39,11 @@ export class Music {
       "Minor" : ['m', 'dim', '', 'm', 'm', '', ''],
     };
 
+    triadSymbols = {
+      "Major" : ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii' + '\u02DA'],
+      "Minor" : ['i', 'ii' + '\u02DA', 'III', 'iv', 'v', 'VI', 'VII'],
+    };
+
     chordLeading = {
       1: [1,2,3,4,5,6,7],
       2: [4,5,7],
@@ -113,6 +118,6 @@ export class Music {
     }
 
     getNextTriadNumbers(triadNumber) {
-      return this.chordLeading[triadNumber];
+      return this.chordLeading[triadNumber+1];
     }
 }
