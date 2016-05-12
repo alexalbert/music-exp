@@ -1,0 +1,70 @@
+<template>
+  <require from="./piano"></require>
+
+  <div class="container-fluid"
+  <section class="au-animate">
+    <h2>${heading}</h2>
+    <div class="row">
+      <div class="col-xs-3">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr repeat.for="key of keyNames"
+              click.delegate="onTypeChange(key)"
+              class ="${key === selectedKey ? 'selected-row' : ''}">
+              <td>${key}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+      <button class="btn btn-warning col-xs-5 pull-left"
+        if.bind="root" click.delegate="playComposition()">
+          Play random key notes
+       </button>
+      </div>
+    </div>
+    <div class="col-xs-9">
+      <div>
+        <piano number-of-notes.bind="14"></piano>
+      </div>
+      <div>
+        <h3 if.bind="root" >Diatonic triads</h3>
+        <div class="btn-toolbar">
+          <label repeat.for="triad of triads" type="button" class="btn btn-primary btn-md" click.delegate="clickedTriad(triad.number, triad.chord, $index)">
+            ${triadSymbols[$index]}<br>${triad.name + triad.chord}
+          </label>
+        </div>
+      </div>
+      <div>
+        <div class="row" if.bind="leadingSelected.length >0" >
+          <div class="col-xs-8">
+            <h3>Chord leading</h3>
+          </div>
+          <div class="col-xs-4">
+            <button class="btn btn-warning col-xs-2 pull-left"
+              click.delegate="playSelectedLeading()">Play</button>
+          </div>
+      </div>
+        <div class="row">
+          <div repeat.for="chord of leadingSelected">
+            <label class="col-xs-2 text-left ${chord.active ? 'text-danger' : 'text-primary'}">${chord.name + chord.chord}<label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-2" repeat.for="chords of leading">
+            <div class="btn-group-vertical" data-toggle="buttons">
+              <label class="btn btn-primary vertical-space" repeat.for="triad of chords"
+              click.delegate="leadingClick($parent.$index, $index)">
+              <input  type="radio">${$parent.$parent.triadSymbols[$index]}&nbsp${triad.name + triad.chord}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+</div>
+</template>

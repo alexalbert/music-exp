@@ -1,0 +1,17 @@
+
+<template>
+	<link href="styles/piano.css" rel="stylesheet" type="text/css" />
+
+	<div id="p-wrapper">
+		<ul id="piano" css="width: ${40*numberOfNotes}px;">
+				<li repeat.for="note of piano">
+					<div class="anchor ${note.active}" click.delegate="click(note.number, note.name)" id="note.name">
+						<p>${note.name}
+					</div>
+					<span if.bind="note.flat" class="${note.flatactive}" click.delegate = "click(note.number-1, note.flatName)" id="note.name-1">
+						<p>${note.flatName}
+					</span>
+			  </li>
+		</ul>
+	</div>
+</template>

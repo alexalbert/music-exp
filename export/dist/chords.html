@@ -1,0 +1,28 @@
+<template>
+  <require from="./piano"></require>
+
+  <div class="container-fluid">
+  <section class="au-animate">
+    <h2>${heading}</h2>
+    <div class="row">
+      <div class="col-xs-3">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+              <tr repeat.for="chord of chordTypes"
+              click.delegate="onTypeChange($index)"
+              class ="${chord.selected ? 'selected-row' : ''}">
+              <td>${chord.name}</td>
+              <td>${chord.symbol}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-xs-9">
+        <piano number-of-notes.bind="14"></piano>
+      </div>
+    </div>
+  </section>
+  </div>
+</template>
