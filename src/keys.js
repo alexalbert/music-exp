@@ -10,7 +10,8 @@ export class Chords {
 
   heading = 'Keys';
 
-  chordLeading = [];
+  leading = [];
+  leadingSelected = [];
 
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
@@ -50,6 +51,8 @@ export class Chords {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.triadSymbols = this.music.triadSymbols[this.selectedKey];
     this.showKey(this.root);
+    this.leading = [];
+    this.leadingSelected = [];
   }
 
   playComposition(root) {
@@ -96,6 +99,12 @@ export class Chords {
 
   leadingClick(index1, index2) {
      console.log(index1 + " " + index2);
+     let chord = this.leading[index1][index2];
+     chord.notes.actions = [Action.play];
+     this.eventAggregator.publish(chord.notes);
+     this.leadingSelected.splice(index1);
+     this.leadingSelected.push({...chord});
+
      // Max 6 chords
      if (index1 < 5) {
        this.nextLeading(index1, index2);
@@ -104,20 +113,35 @@ export class Chords {
 
   resetLeading(index) {
     this.leading = [];
-    this.leading.push(
-      {selected: 0, triads: [this.triads[index].name + this.triads[index].chord]});
+    this.leading.push([this.triads[index]]);
     this.nextLeading(0, index);
+    this.leadingSelected = [{...this.triads[index]}];
+  }
+
+  playSelectedLeading() {
+    let timeout = 10;
+    for (let chord of this.leadingSelected) {
+        let ch = chord;
+        setTimeout(() => {
+          ch.active = true;
+          ch.notes.actions = [Action.playChord];
+          this.eventAggregator.publish(ch.notes);
+        }, timeout);
+        timeout += 1000;
+        setTimeout(() => {
+          ch.active = false;
+        }, timeout);
+    }
   }
 
   nextLeading(index1, index2) {
-
     let nextChordNumbers = this.music.getNextTriadNumbers(index2);
     let nextChords = [];
     for (let chordIndex in nextChordNumbers) {
-      nextChords.push(this.triads[chordIndex].name + this.triads[chordIndex].chord);
+      nextChords.push(this.triads[chordIndex]);
     }
     this.leading.splice(index1+1);
-    this.leading.push({selected: 2, triads: nextChords});
+    this.leading.push(nextChords);
   }
 
   playTriad(root, chord) {
