@@ -1,6 +1,7 @@
 export class NoteInfo {
   actions = [];
   notes = [];
+  channel = 0;
 
   constructor(noteNumber, noteName) {
     if (noteNumber && noteName) {

@@ -25,11 +25,14 @@
     window.onload = function () {
     	MIDI.loadPlugin({
     		soundfontUrl: "midi/soundfont/",
-    		instrument: "acoustic_grand_piano",
+        //instrument: "acoustic_grand_piano_mp3.js",
+       instruments: ["acoustic_grand_piano", "synth_drum"],
     		onprogress: function(state, progress) {
     			console.log(state, progress);
     		},
     		onsuccess: function() {
+          MIDI.programChange(0, 0);  // piano
+          MIDI.programChange(1, 118); // drums
           console.log("MIDI loaded!")
     		}
     	});
