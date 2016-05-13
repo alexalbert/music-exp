@@ -17,6 +17,8 @@ module.exports = {
     "jspm_packages/github/github/fetch@0.11.0.js",
     "jspm_packages/github/github/fetch@0.11.0/fetch.js",
     "jspm_packages/github/twbs/bootstrap@3.3.6/fonts/*",
+    "jspm_packages/github/systemjs/plugin-text@0.0.3.js",
+    "jspm_packages/github/systemjs/plugin-text@0.0.3/text.js",
     "jspm_packages/npm/bluebird@3.3.5/js/browser/bluebird.min.js*"
   ]
 };
