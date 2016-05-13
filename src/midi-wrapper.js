@@ -27,8 +27,8 @@ export class MidiWrapper {
      var velocity = 127; // how hard the note hits
      MIDI.setVolume(0, 127);
      let numbers = notes.notes.map(n => { return n.number; })
-     MIDI.chordOn(0, numbers, velocity, delay);
-     MIDI.chordOff(0, numbers, delay + 0.75);
+     MIDI.chordOn(notes.channel, numbers, velocity, delay);
+     MIDI.chordOff(notes.channel, numbers, delay + 0.75);
    }
 
    playNotes(notes) {
@@ -37,8 +37,8 @@ export class MidiWrapper {
      MIDI.setVolume(0, 127);
      for (var i = 0; i < notes.notes.length; i++) {
        let note = notes.notes[i];
-       MIDI.noteOn(0, note.number, velocity, note.start ? note.start : delay);
-       MIDI.noteOff(0, note.number, note.end ? note.end : delay + 0.75);
+       MIDI.noteOn(notes.channel, note.number, velocity, note.start ? note.start : delay);
+       MIDI.noteOff(notes.channel, note.number, note.end ? note.end : delay + 0.75);
       }
    }
 }

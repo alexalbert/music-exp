@@ -12,7 +12,7 @@
       <div class="message">Music experiments</div>
       <i class="fa fa-spinner fa-spin"></i>
     </div>
-
+    <script src="jspm_packages/npm/bluebird@3.3.5/js/browser/bluebird.min.js"></script>
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
     <script>
@@ -25,11 +25,14 @@
     window.onload = function () {
     	MIDI.loadPlugin({
     		soundfontUrl: "midi/soundfont/",
-    		instrument: "acoustic_grand_piano",
+        //instrument: "acoustic_grand_piano_mp3.js",
+       instruments: ["acoustic_grand_piano", "synth_drum"],
     		onprogress: function(state, progress) {
     			console.log(state, progress);
     		},
     		onsuccess: function() {
+          MIDI.programChange(0, 0);  // piano
+          MIDI.programChange(1, 118); // drums
           console.log("MIDI loaded!")
     		}
     	});
