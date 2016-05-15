@@ -95,9 +95,10 @@ export class Chords {
     this.resetLeading(index);
   }
 
-  leadingClick(sequence, triadIndex) {
+  leadingClick(sequence, clickIndex) {
      console.log(sequence + " " + triadIndex);
-     let chord = this.triads[this.progressions[sequence][triadIndex]];
+     let triadIndex = this.progressions[sequence][clickIndex];
+     let chord = this.triads[triadIndex];
      chord.notes.actions = [Action.play];
      this.eventAggregator.publish(chord.notes);
      this.selectedProgression.splice(sequence);
