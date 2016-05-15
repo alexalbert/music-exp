@@ -10,8 +10,8 @@ export class Chords {
 
   heading = 'Keys';
 
-  leading = [];
-  leadingSelected = [];
+  progressions = [];  // array of arrys of indices to triads [[int]]
+  selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
 
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
@@ -51,8 +51,6 @@ export class Chords {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.triadSymbols = this.music.triadSymbols[this.selectedKey];
     this.showKey(this.root);
-    this.leading = [];
-    this.leadingSelected = [];
   }
 
   playComposition(root) {
@@ -97,65 +95,56 @@ export class Chords {
     this.resetLeading(index);
   }
 
-  leadingClick(index1, index2) {
-     console.log(index1 + " " + index2);
-     let chord = this.leading[index1][index2];
+  leadingClick(sequence, triadIndex) {
+     console.log(sequence + " " + triadIndex);
+     let chord = this.triads[this.progressions[sequence][triadIndex]];
      chord.notes.actions = [Action.play];
      this.eventAggregator.publish(chord.notes);
-     this.leadingSelected.splice(index1);
-     this.leadingSelected.push({...chord});
+     this.selectedProgression.splice(sequence);
+     this.selectedProgression.push({triadIndex: triadIndex});
 
      // Max 6 chords
-     if (index1 < 5) {
-       this.nextLeading(index1, index2);
+     if (sequence < 5) {
+       this.nextLeading(sequence, triadIndex);
     }
   }
 
   resetLeading(index) {
-    this.leading = [];
-    this.leading.push([this.triads[index]]);
+    this.progressions = [];
+    this.progressions.push([index]);
     this.nextLeading(0, index);
-    this.leadingSelected = [{...this.triads[index]}];
+    this.selectedProgression = [{triadIndex: index}];
   }
 
-  playSelectedLeading() {
+  playSelectedProgression() {
     let timeout = 10;
-    for (let chord of this.leadingSelected) {
-        let ch = chord;
+    for (let triad of this.selectedProgression) {
+        let chord = this.triads[triad.triadIndex];
         setTimeout(() => {
-          ch.active = true;
-          ch.notes.actions = [Action.playChord];
-          this.eventAggregator.publish(ch.notes);
+          triad.active = true;
+          chord.notes.actions = [Action.playChord];
+          this.eventAggregator.publish(chord.notes);
         }, timeout);
         timeout += 1000;
         setTimeout(() => {
-          ch.active = false;
+          triad.active = false;
         }, timeout);
     }
   }
 
-  nextLeading(index1, index2) {
-    let nextChordNumbers = this.music.getNextTriadNumbers(index2);
+  nextLeading(sequenceNo, triadIndex) {
+    let nextChordNumbers = this.music.getNextTriadNumbers(triadIndex);
     let nextChords = [];
-    for (let chordIndex in nextChordNumbers) {
-      nextChords.push(this.triads[chordIndex]);
+    for (let chordIndex of nextChordNumbers) {
+      nextChords.push(chordIndex-1);
     }
-    this.leading.splice(index1+1);
-    this.leading.push(nextChords);
+    this.progressions.splice(sequenceNo+1);
+    this.progressions.push(nextChords);
   }
 
   playTriad(root, chord) {
     let notes = this.music.getChordNotes(root, chord);
     notes.actions = [Action.activate, Action.play];
     this.eventAggregator.publish(notes);
-  }
-
-  getChordLeading(triadNumber) {
-    nextTriads = [];
-    nextTriadNumbers = this.music.getNextTriadNumbers(triad)
-    for (i of nextTriadNumbers) {
-      nextTriads.push(this.triads[i+1]);
-    }
-    return nextTriad;
   }
 }
