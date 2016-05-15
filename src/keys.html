@@ -29,7 +29,7 @@
         <piano number-of-notes.bind="14"></piano>
       </div>
       <div>
-        <h3 if.bind="root" >Diatonic triads</h3>
+        <h3 if.bind="root">Diatonic triads</h3>
         <div class="btn-toolbar">
           <label repeat.for="triad of triads" type="button" class="btn btn-primary btn-md" click.delegate="clickedTriad(triad.number, triad.chord, $index)">
             ${triadSymbols[$index]}<br>${triad.name + triad.chord}
@@ -39,7 +39,7 @@
       <div>
         <div class="row" if.bind="leadingSelected.length >0" >
           <div class="col-xs-8">
-            <h3>Chord leading</h3>
+            <h3>Chord progression</h3>
           </div>
           <div class="col-xs-4">
             <button class="btn btn-warning col-xs-2 pull-left"
@@ -56,7 +56,7 @@
             <div class="btn-group-vertical" data-toggle="buttons">
               <label class="btn btn-primary vertical-space" repeat.for="triad of chords"
               click.delegate="leadingClick($parent.$index, $index)">
-              <input  type="radio">${$parent.$parent.triadSymbols[$index]}&nbsp${triad.name + triad.chord}
+              <input  type="radio">${triad.name + triad.chord}
             </label>
           </div>
         </div>
