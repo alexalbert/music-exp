@@ -137,8 +137,8 @@ export class Chords {
   nextLeading(index1, index2) {
     let nextChordNumbers = this.music.getNextTriadNumbers(index2);
     let nextChords = [];
-    for (let chordIndex in nextChordNumbers) {
-      nextChords.push(this.triads[chordIndex]);
+    for (let chordIndex of nextChordNumbers) {
+      nextChords.push(this.triads[chordIndex-1]);
     }
     this.leading.splice(index1+1);
     this.leading.push(nextChords);
