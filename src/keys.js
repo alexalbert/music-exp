@@ -3,6 +3,7 @@ import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {NoteInfo, Action} from './note-info';
 import {Music} from './music';
+import {computedFrom} from 'aurelia-framework';
 
 @inject(EventAggregator, Music)
 export class Chords {
@@ -11,6 +12,10 @@ export class Chords {
   heading = 'Chord progression';
 
   harmonicProgression = true;
+
+  selectedNotes = {};
+
+  noteColor = {};
 
   progressions = [];  // array of arrys of indices to triads [[int]]
   selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
@@ -132,14 +137,37 @@ export class Chords {
      this.eventAggregator.publish(chord.notes);
      this.selectedProgression.splice(sequence);
      this.selectedProgression.push({triadIndex: triadIndex});
-
      // Max 6 chords
      if (sequence < 5) {
        this.nextLeading(sequence, triadIndex);
     }
+
+    this.updateSelectedNotes();
   }
 
-  resetLeading(index) {
+ updateSelectedNotes() {
+   this.selectedNotes = {};
+    for (let triad of this.selectedProgression) {
+      for (let note of this.triads[triad.triadIndex].notes.notes) {
+        if (this.selectedNotes[note.name]) {
+          this.selectedNotes[note.name] += 1;
+        } else {
+          this.selectedNotes[note.name] = 1;
+        }
+      }
+    }
+    for (let prop in this.selectedNotes) {
+      if (this.selectedNotes.hasOwnProperty(prop)) {
+         let count = this.selectedNotes[prop];
+         if (count >= 4) this.noteColor[prop] = 'danger';
+         else if (count === 3) this.noteColor[prop] = 'warning';
+         else if (count === 2) this.noteColor[prop] = 'info';
+         else this.noteColor[prop] = 'default';
+      }
+    }
+ }
+
+ resetLeading(index) {
     this.progressions = [];
     this.progressions.push([index]);
     this.nextLeading(0, index);

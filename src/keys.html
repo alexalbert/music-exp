@@ -71,9 +71,17 @@
               <input  type="radio">${triads[triadIndex].name + triads[triadIndex].chord}
             </label>
           </div>
-        </div>
       </div>
     </div>
+    <br>
+    <div class="row">
+      <div class="col-xs-2" repeat.for="chord of selectedProgression">
+        <div class="btn-group-vertical" data-toggle="buttons">
+          <label class="btn btn-${noteColor[note.name]} vertical-space" repeat.for="note of triads[chord.triadIndex].notes.notes"
+          <input  type="radio">${note.name}
+        </label>
+      </div>
+  </div>
   </div>
 </div>
 </div>
