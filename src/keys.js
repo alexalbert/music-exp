@@ -8,7 +8,9 @@ import {Music} from './music';
 export class Chords {
   playNotes = false;
 
-  heading = 'Keys';
+  heading = 'Chord progression';
+
+  harmonicProgression = true;
 
   progressions = [];  // array of arrys of indices to triads [[int]]
   selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
@@ -42,9 +44,19 @@ export class Chords {
     });
   }
 
-  onTypeChange(key) {
+  onKeyChange(key) {
     this.selectedKey = key;
     this.setKeyAndRoot();
+  }
+
+  onTriadChange(root, chord, index) {
+    this.playTriad(root, chord);
+    this.resetLeading(index);
+  }
+
+  onProgressionTypeChange() {
+    this.resetLeading(0);
+    return true;
   }
 
   setKeyAndRoot() {
@@ -90,9 +102,26 @@ export class Chords {
     return notes;
   }
 
-  clickedTriad(root, chord, index) {
-    this.playTriad(root, chord);
-    this.resetLeading(index);
+  playTriad(root, chord) {
+    let notes = this.music.getChordNotes(root, chord);
+    notes.actions = [Action.activate, Action.play];
+    this.eventAggregator.publish(notes);
+  }
+
+  playSelectedProgression() {
+    let timeout = 10;
+    for (let triad of this.selectedProgression) {
+        let chord = this.triads[triad.triadIndex];
+        setTimeout(() => {
+          triad.active = true;
+          chord.notes.actions = [Action.playChord];
+          this.eventAggregator.publish(chord.notes);
+        }, timeout);
+        timeout += 1000;
+        setTimeout(() => {
+          triad.active = false;
+        }, timeout);
+    }
   }
 
   leadingClick(sequence, clickIndex) {
@@ -117,35 +146,14 @@ export class Chords {
     this.selectedProgression = [{triadIndex: index}];
   }
 
-  playSelectedProgression() {
-    let timeout = 10;
-    for (let triad of this.selectedProgression) {
-        let chord = this.triads[triad.triadIndex];
-        setTimeout(() => {
-          triad.active = true;
-          chord.notes.actions = [Action.playChord];
-          this.eventAggregator.publish(chord.notes);
-        }, timeout);
-        timeout += 1000;
-        setTimeout(() => {
-          triad.active = false;
-        }, timeout);
-    }
-  }
-
   nextLeading(sequenceNo, triadIndex) {
-    let nextChordNumbers = this.music.getNextTriadNumbers(triadIndex);
+    let nextChordNumbers = this.music.getNextTriadNumbers(
+      this.harmonicProgression ? triadIndex : 0);
     let nextChords = [];
     for (let chordIndex of nextChordNumbers) {
       nextChords.push(chordIndex-1);
     }
     this.progressions.splice(sequenceNo+1);
     this.progressions.push(nextChords);
-  }
-
-  playTriad(root, chord) {
-    let notes = this.music.getChordNotes(root, chord);
-    notes.actions = [Action.activate, Action.play];
-    this.eventAggregator.publish(notes);
   }
 }
