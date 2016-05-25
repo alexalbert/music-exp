@@ -3,12 +3,19 @@ import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {NoteInfo, Action} from './note-info';
 import {Music} from './music';
+import {computedFrom} from 'aurelia-framework';
 
 @inject(EventAggregator, Music)
 export class Chords {
   playNotes = false;
 
-  heading = 'Keys';
+  heading = 'Chord progression';
+
+  harmonicProgression = true;
+
+  selectedNotes = {};
+
+  noteColor = {};
 
   progressions = [];  // array of arrys of indices to triads [[int]]
   selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
@@ -42,14 +49,25 @@ export class Chords {
     });
   }
 
-  onTypeChange(key) {
+  onKeyChange(key) {
     this.selectedKey = key;
     this.setKeyAndRoot();
+  }
+
+  onTriadChange(root, chord, index) {
+    this.playTriad(root, chord);
+    this.resetLeading(index);
+  }
+
+  onProgressionTypeChange() {
+    this.resetLeading(0);
+    return true;
   }
 
   setKeyAndRoot() {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.triadSymbols = this.music.triadSymbols[this.selectedKey];
+    this.updateSelectedNotes();
     this.showKey(this.root);
   }
 
@@ -90,31 +108,10 @@ export class Chords {
     return notes;
   }
 
-  clickedTriad(root, chord, index) {
-    this.playTriad(root, chord);
-    this.resetLeading(index);
-  }
-
-  leadingClick(sequence, clickIndex) {
-     console.log(sequence + " " + triadIndex);
-     let triadIndex = this.progressions[sequence][clickIndex];
-     let chord = this.triads[triadIndex];
-     chord.notes.actions = [Action.play];
-     this.eventAggregator.publish(chord.notes);
-     this.selectedProgression.splice(sequence);
-     this.selectedProgression.push({triadIndex: triadIndex});
-
-     // Max 6 chords
-     if (sequence < 5) {
-       this.nextLeading(sequence, triadIndex);
-    }
-  }
-
-  resetLeading(index) {
-    this.progressions = [];
-    this.progressions.push([index]);
-    this.nextLeading(0, index);
-    this.selectedProgression = [{triadIndex: index}];
+  playTriad(root, chord) {
+    let notes = this.music.getChordNotes(root, chord);
+    notes.actions = [Action.activate, Action.play];
+    this.eventAggregator.publish(notes);
   }
 
   playSelectedProgression() {
@@ -133,19 +130,59 @@ export class Chords {
     }
   }
 
+  leadingClick(sequence, clickIndex) {
+     console.log(sequence + " " + triadIndex);
+     let triadIndex = this.progressions[sequence][clickIndex];
+     let chord = this.triads[triadIndex];
+     chord.notes.actions = [Action.play];
+     this.eventAggregator.publish(chord.notes);
+     this.selectedProgression.splice(sequence);
+     this.selectedProgression.push({triadIndex: triadIndex});
+     // Max 6 chords
+     if (sequence < 5) {
+       this.nextLeading(sequence, triadIndex);
+    }
+
+    this.updateSelectedNotes();
+  }
+
+ updateSelectedNotes() {
+   this.selectedNotes = {};
+    for (let triad of this.selectedProgression) {
+      for (let note of this.triads[triad.triadIndex].notes.notes) {
+        if (this.selectedNotes[note.name]) {
+          this.selectedNotes[note.name] += 1;
+        } else {
+          this.selectedNotes[note.name] = 1;
+        }
+      }
+    }
+    for (let prop in this.selectedNotes) {
+      if (this.selectedNotes.hasOwnProperty(prop)) {
+         let count = this.selectedNotes[prop];
+         if (count >= 4) this.noteColor[prop] = 'danger';
+         else if (count === 3) this.noteColor[prop] = 'warning';
+         else if (count === 2) this.noteColor[prop] = 'info';
+         else this.noteColor[prop] = 'default';
+      }
+    }
+ }
+
+ resetLeading(index) {
+    this.progressions = [];
+    this.progressions.push([index]);
+    this.nextLeading(0, index);
+    this.selectedProgression = [{triadIndex: index}];
+  }
+
   nextLeading(sequenceNo, triadIndex) {
-    let nextChordNumbers = this.music.getNextTriadNumbers(triadIndex);
+    let nextChordNumbers = this.music.getNextTriadNumbers(
+      this.harmonicProgression ? triadIndex : 0);
     let nextChords = [];
     for (let chordIndex of nextChordNumbers) {
       nextChords.push(chordIndex-1);
     }
     this.progressions.splice(sequenceNo+1);
     this.progressions.push(nextChords);
-  }
-
-  playTriad(root, chord) {
-    let notes = this.music.getChordNotes(root, chord);
-    notes.actions = [Action.activate, Action.play];
-    this.eventAggregator.publish(notes);
   }
 }
