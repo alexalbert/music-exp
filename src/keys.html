@@ -60,7 +60,7 @@
       </div>
       <div class="row">
         <div repeat.for="triad of selectedProgression">
-          <label class="col-xs-2 text-left ${triad.active ? 'text-danger' : 'text-primary'}">${triads[triad.triadIndex].name + triads[triad.triadIndex].chord} <label>
+          <label class="col-xs-2 text-left ${triad.active ? 'text-danger' : 'text-primary'}">${triadSymbols[triad.triadIndex]}&nbsp${triads[triad.triadIndex].name + triads[triad.triadIndex].chord} <label>
           </div>
         </div>
         <div class="row">
@@ -68,19 +68,25 @@
             <div class="btn-group-vertical" data-toggle="buttons">
               <label class="btn btn-primary vertical-space" repeat.for="triadIndex of chords"
               click.delegate="leadingClick($parent.$index, $index)">
-              <input  type="radio">${triads[triadIndex].name + triads[triadIndex].chord}
+              <input  type="radio">${triadSymbols[triadIndex]}&nbsp${triads[triadIndex].name + triads[triadIndex].chord}
             </label>
           </div>
       </div>
     </div>
-    <br>
+
     <div class="row">
+      <div class="col-xs-12" if.bind="selectedProgression.length >0">
+        <h3>Notes in progression</h3>
+      </div>
       <div class="col-xs-2" repeat.for="chord of selectedProgression">
         <div class="btn-group-vertical" data-toggle="buttons">
           <label class="btn btn-${noteColor[note.name]} vertical-space" repeat.for="note of triads[chord.triadIndex].notes.notes"
           <input  type="radio">${note.name}
         </label>
       </div>
+      <br>
+      <br>
+      <br>
   </div>
   </div>
 </div>

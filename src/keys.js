@@ -67,6 +67,7 @@ export class Chords {
   setKeyAndRoot() {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.triadSymbols = this.music.triadSymbols[this.selectedKey];
+    this.updateSelectedNotes();
     this.showKey(this.root);
   }
 
