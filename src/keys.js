@@ -13,9 +13,19 @@ export class Chords {
 
   harmonicProgression = true;
 
-  selectedNotes = {};
-
-  noteColor = {};
+  noteColors = {
+    'A': 'red',
+    'B': 'green',
+    'C': 'blue',
+    'D': 'purple',
+    'E': 'lime',
+    'F': 'magenta',
+    'G': 'black',
+    'C#': 'brown',
+    'F#': 'maroon',
+    'G#': 'cyan',
+    'A#': 'olive',
+  };
 
   extensionNames = [null, '7', '9', '11', '13'];
 
@@ -29,6 +39,7 @@ export class Chords {
 
     this.selectedKey = 'Major';
     this.keyNames = Object.keys(this.keys);
+    this.selectedNotes = new Map();
   }
 
   attached() {
@@ -70,7 +81,6 @@ export class Chords {
     this.selectedProgression[index].extension = event.target.value;
     console.log(this.selectedProgression[index].extension);
     this.updateSelectedNotes();
-    console.log(this.selectedProgression);
   }
 
   setKeyAndRoot() {
@@ -156,26 +166,18 @@ export class Chords {
   }
 
  updateSelectedNotes() {
-   this.selectedNotes = {};
+   this.selectedNotes.clear();
     for (let triad of this.selectedProgression) {
       if (triad.extension) {
         this.triads[triad.triadIndex] = this.music.extendChord(this.triads[triad.triadIndex], triad.extension);
       }
       for (let note of this.triads[triad.triadIndex].notes.notes) {
-        if (this.selectedNotes[note.name]) {
-          this.selectedNotes[note.name] += 1;
+        if (this.selectedNotes.has(note.name)) {
+          let n = this.selectedNotes.get(note.name);
+          this.selectedNotes.set(note.name, n+1);
         } else {
-          this.selectedNotes[note.name] = 1;
+          this.selectedNotes.set(note.name, 1);
         }
-      }
-    }
-    for (let prop in this.selectedNotes) {
-      if (this.selectedNotes.hasOwnProperty(prop)) {
-         let count = this.selectedNotes[prop];
-         if (count >= 4) this.noteColor[prop] = 'danger';
-         else if (count === 3) this.noteColor[prop] = 'warning';
-         else if (count === 2) this.noteColor[prop] = 'info';
-         else this.noteColor[prop] = 'default';
       }
     }
  }
