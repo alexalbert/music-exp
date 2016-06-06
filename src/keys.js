@@ -17,8 +17,10 @@ export class Chords {
 
   noteColor = {};
 
+  extensionNames = [null, '7', '9', '11', '13'];
+
   progressions = [];  // array of arrys of indices to triads [[int]]
-  selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
+  selectedProgression = []; // array of objects [{ triadIndex: int, active: bool, ext: string}]
 
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
@@ -62,6 +64,13 @@ export class Chords {
   onProgressionTypeChange() {
     this.resetLeading(0);
     return true;
+  }
+
+  onExtensionChange(index, event) {
+    this.selectedProgression[index].extension = event.target.value;
+    console.log(this.selectedProgression[index].extension);
+    this.updateSelectedNotes();
+    console.log(this.selectedProgression);
   }
 
   setKeyAndRoot() {
@@ -149,6 +158,9 @@ export class Chords {
  updateSelectedNotes() {
    this.selectedNotes = {};
     for (let triad of this.selectedProgression) {
+      if (triad.extension) {
+        this.triads[triad.triadIndex] = this.music.extendChord(this.triads[triad.triadIndex], triad.extension);
+      }
       for (let note of this.triads[triad.triadIndex].notes.notes) {
         if (this.selectedNotes[note.name]) {
           this.selectedNotes[note.name] += 1;

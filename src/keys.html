@@ -60,7 +60,16 @@
       </div>
       <div class="row">
         <div repeat.for="triad of selectedProgression">
-          <label class="col-xs-2 text-left ${triad.active ? 'text-danger' : 'text-primary'}">${triadSymbols[triad.triadIndex]}&nbsp${triads[triad.triadIndex].name + triads[triad.triadIndex].chord} <label>
+          <label class="col-xs-2 text-left ${triad.active ? 'text-danger' : 'text-primary'}">
+            ${triadSymbols[triad.triadIndex]}&nbsp${triads[triad.triadIndex].name + triads[triad.triadIndex].chord}
+          <label>
+          &nbsp
+          <select value.bind="selectedProgression[$index].ext">
+              <option repeat.for="ext of extensionNames">
+                ${ext}
+              </option>
+            </select>
+            </div>
           </div>
         </div>
         <div class="row">
