@@ -125,10 +125,10 @@ export class Music {
     }
 
     extendChord(chord, extension) {
-      let newChord = this.clone(chord);
+      //let newChord = this.clone(chord);
       // Remove extra notes
-      newChord.notes.notes.splice(3);
-      let rootNumber = newChord.notes.notes[0].number;
+      //newChord.notes.notes.splice(3);
+      let rootNumber = chord.notes.notes[0].number;
 
       let extraNotes = undefined;
       switch(extension) {
@@ -146,14 +146,15 @@ export class Music {
           break;
     }
 
+    let notes = [...chord.notes.notes];
     if (extraNotes) {
       for (let noteInterval of extraNotes) {
         let noteNumber = rootNumber + noteInterval;
-        newChord.notes.notes.push({number: noteNumber, name: this.noteName(noteNumber)});
+        notes.push({number: noteNumber, name: this.noteName(noteNumber)});
       }
     }
 
-    return newChord;
+    return notes;
   }
 
   clone(obj) {

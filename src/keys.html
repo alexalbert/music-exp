@@ -9,6 +9,7 @@
         <div class="table-responsive">
           <table class="table">
             <tbody>
+              <!-- Key selection -->
               <tr repeat.for="key of keyNames"
               click.delegate="onKeyChange(key)"
               class ="${key === selectedKey ? 'selected-row' : ''}">
@@ -30,6 +31,7 @@
     </div>
     <div>
       <h3 if.bind="root">Diatonic triads</h3>
+      <!-- Diatonic triads -->
       <div class="btn-toolbar">
         <label repeat.for="triad of triads" type="button" class="btn btn-primary btn-md" click.delegate="onTriadChange(triad.number, triad.chord, $index)">
           ${triadSymbols[$index]}<br>${triad.name + triad.chord}
@@ -37,12 +39,14 @@
       </div>
     </div>
     <div>
+
       <div class="row" if.bind="selectedProgression.length >0" >
         <div class="col-xs-6">
           <h3>Progression</h3>
         </div>
         <div class="col-xs-4">
           <br>
+          <!-- Harmonic / All progression selection -->
           <div >
             <label class="radio-inline">
               <input type="radio" name="progression" model.bind="true" checked.bind="harmonicProgression" click.delegate="onProgressionTypeChange()"><strong>Harmonic</strong>
@@ -60,11 +64,12 @@
       </div>
       <div class="row">
         <div repeat.for="triad of selectedProgression">
+          <!-- Selected chord of progression -->
           <label class="col-xs-2 text-left ${triad.active ? 'text-danger' : 'text-primary'}">
             ${triadSymbols[triad.triadIndex]}&nbsp${triads[triad.triadIndex].name + triads[triad.triadIndex].chord}
-            <label>
               &nbsp
-              <select value.bind="selectedProgression[$index].ext">
+              <!-- Extension  -->
+              <select value.bind="extensions[$index]" change.delegate="onExtensionChange($index)"">
                 <option repeat.for="ext of extensionNames">
                   ${ext}
                 </option>
@@ -72,6 +77,7 @@
             </div>
           </div>
         </div>
+        <!-- Progression selection -->
         <div class="row">
           <div class="col-xs-2" repeat.for="chords of progressions">
             <div class="btn-group-vertical" data-toggle="buttons">
@@ -84,16 +90,18 @@
       </div>
       <div  if.bind="selectedProgression.length >0">
         <h3>Notes in progression</h3>
+        <!-- Note count -->
         <label class="text-info pull-left">Note count:</label>
         &nbsp&nbsp
         <label class="text-primary" repeat.for="[note, count] of selectedNotes">
           ${note}:&nbsp${count}&nbsp|&nbsp
         </label>
       </div>
+      <!-- Notes of chords -->
       <div class="row">
         <div class="col-xs-2" repeat.for="chord of selectedProgression">
           <div class="btn-group-vertical" data-toggle="buttons">
-            <label class="btn btn-default vertical-space" repeat.for="note of triads[chord.triadIndex].notes.notes"
+            <label class="btn btn-default vertical-space" repeat.for="note of chord.notes"
             <input  type="radio"><strong><font color="${noteColors[note.name]}">${note.name}</font></strong>
           </label>
         </div>
