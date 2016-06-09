@@ -152,8 +152,10 @@ export class Chords {
         let chord = this.triads[triad.triadIndex];
         setTimeout(() => {
           triad.active = true;
-          chord.notes.actions = [Action.playChord];
-          this.eventAggregator.publish(chord.notes);
+          let chordNotes = new NoteInfo();
+          chordNotes.actions = [Action.playChord];
+          chordNotes.notes = triad.notes;
+          this.eventAggregator.publish(chordNotes);
         }, timeout);
         timeout += 1000;
         setTimeout(() => {
@@ -200,6 +202,8 @@ export class Chords {
         }
       }
     }
+
+    this.selectedNotes = this.sortMap(this.selectedNotes);
  }
 
  resetLeading(index) {
@@ -221,5 +225,17 @@ export class Chords {
     }
     this.progressions.splice(sequenceNo+1);
     this.progressions.push(nextChords);
+  }
+
+  sortMap(map) {
+    let newMap = new Map();
+    Array.from(map.keys())
+    .sort((a,b) => { return map.get(b) - map.get(a) })
+    .map(k => { return { key: k, value: map.get(k) }})
+    .reduce((prev, curr) => {
+      newMap.set(curr.key, curr.value);
+     }, newMap);
+
+    return newMap;
   }
 }
