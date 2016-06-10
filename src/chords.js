@@ -10,7 +10,7 @@ export class Chords {
 
   constructor(eventAggregator, music) {
       this.eventAggregator = eventAggregator;
-      this.chordTypes = music.chordTypes;;
+      this.chordTypes = music.chordTypes;
 
       this.selectedChord = this.chordTypes[0];
       this.chordTypes[0].selected = true;
@@ -22,6 +22,7 @@ export class Chords {
 
   detached() {
       this.subscription.dispose();
+      this.chordTypes.forEach(c => { c.selected = false; } )
   }
 
   subscribe() {
@@ -34,7 +35,6 @@ export class Chords {
    }
 
    onTypeChange(index) {
-     console.log(index);
      this.selectedChord.selected = false;
      this.selectedChord = this.chordTypes[index];
      this.selectedChord.selected = true;

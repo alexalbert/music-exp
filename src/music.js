@@ -15,8 +15,8 @@ export class Music {
     // notes - offsets of notes except root note in half-notes from
     // the root
     chordTypes = [
-      {name: 'Major', symbol: '', notes: [0, 4, 7]},
-      {name: 'Minor', symbol: 'm', notes: [0, 3, 7]},
+      {name: 'Major', symbol: '', notes: [0, 4, 7], ext: ''},
+      {name: 'Minor', symbol: 'm', notes: [0, 3, 7], ext: ''},
       {name: 'Diminished', symbol: 'dim', notes: [0, 3, 6]},
       {name: 'Augmented', symbol: 'aug', notes: [0, 4, 8]},
       {name: 'Suspended 4th', symbol: 'sus4', notes: [0, 5, 7]},
@@ -112,7 +112,10 @@ export class Music {
           chordNotes.push(number, name);
         }
 
-        triads.push({name: this.noteName(chordRoot.number), number: chordRoot.number, chord: chordSymbol, notes: chordNotes});
+        triads.push({name: this.noteName(chordRoot.number),
+                     number: chordRoot.number,
+                     chord: chordSymbol,
+                     notes: chordNotes});
       }
       return triads;
     }
@@ -120,4 +123,41 @@ export class Music {
     getNextTriadNumbers(triadNumber) {
       return this.chordLeading[triadNumber+1];
     }
-}
+
+    extendChord(chord, extension) {
+      //let newChord = this.clone(chord);
+      // Remove extra notes
+      //newChord.notes.notes.splice(3);
+      let rootNumber = chord.notes.notes[0].number;
+
+      let extraNotes = undefined;
+      switch(extension) {
+        case '7':
+          extraNotes = [10];
+          break;
+        case '9':
+          extraNotes = [10,14];
+          break;
+        case '11':
+          extraNotes = [10,17];
+          break;
+        case '13':
+          extraNotes = [10,21];
+          break;
+    }
+
+    let notes = [...chord.notes.notes];
+    if (extraNotes) {
+      for (let noteInterval of extraNotes) {
+        let noteNumber = rootNumber + noteInterval;
+        notes.push({number: noteNumber, name: this.noteName(noteNumber)});
+      }
+    }
+
+    return notes;
+  }
+
+  clone(obj) {
+        return JSON.parse(JSON.stringify(obj))
+      }
+  }

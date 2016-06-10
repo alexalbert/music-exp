@@ -13,12 +13,25 @@ export class Chords {
 
   harmonicProgression = true;
 
-  selectedNotes = {};
+  noteColors = {
+    'A': 'red',
+    'B': 'green',
+    'C': 'blue',
+    'D': 'purple',
+    'E': 'lime',
+    'F': 'magenta',
+    'G': 'black',
+    'C#': 'brown',
+    'F#': 'maroon',
+    'G#': 'cyan',
+    'A#': 'olive',
+  };
 
-  noteColor = {};
+  extensionNames = [null, '7', '9', '11', '13'];
+  extensions = ['','','','','','','','','','','','','',''];
 
   progressions = [];  // array of arrys of indices to triads [[int]]
-  selectedProgression = []; // array of objects [{ triadIndex: int, active: bool}]
+  selectedProgression = []; // array of objects [{ triadIndex: int, active: bool, ext: string}]
 
   constructor(eventAggregator, music) {
     this.eventAggregator = eventAggregator;
@@ -27,6 +40,7 @@ export class Chords {
 
     this.selectedKey = 'Major';
     this.keyNames = Object.keys(this.keys);
+    this.selectedNotes = new Map();
   }
 
   attached() {
@@ -64,9 +78,27 @@ export class Chords {
     return true;
   }
 
+  onExtensionChange(index) {
+    this.updateSelectedChordNotes(index);
+    this.updateSelectedNotes();
+  }
+
+  updateSelectedChordNotes(index) {
+    let chord = this.triads[this.selectedProgression[index].triadIndex];
+    let notes = this.music.extendChord(chord, this.extensions[index]);
+    this.selectedProgression[index].notes = notes;
+  }
+
+  updateAllSelectedChordNotes() {
+    for (var i = 0; i < this.selectedProgression.length; i++) {
+      this.updateSelectedChordNotes(i);
+    }
+  }
+
   setKeyAndRoot() {
     this.triads = this.music.getTriads(this.root, this.selectedKey);
     this.triadSymbols = this.music.triadSymbols[this.selectedKey];
+    this.updateAllSelectedChordNotes();
     this.updateSelectedNotes();
     this.showKey(this.root);
   }
@@ -120,8 +152,10 @@ export class Chords {
         let chord = this.triads[triad.triadIndex];
         setTimeout(() => {
           triad.active = true;
-          chord.notes.actions = [Action.playChord];
-          this.eventAggregator.publish(chord.notes);
+          let chordNotes = new NoteInfo();
+          chordNotes.actions = [Action.playChord];
+          chordNotes.notes = triad.notes;
+          this.eventAggregator.publish(chordNotes);
         }, timeout);
         timeout += 1000;
         setTimeout(() => {
@@ -134,10 +168,20 @@ export class Chords {
      console.log(sequence + " " + triadIndex);
      let triadIndex = this.progressions[sequence][clickIndex];
      let chord = this.triads[triadIndex];
-     chord.notes.actions = [Action.play];
-     this.eventAggregator.publish(chord.notes);
+     let notes = this.music.extendChord(chord, this.extensions[sequence]);
+
+     let chordNotes = new NoteInfo();
+     chordNotes.actions = [Action.play];
+     chordNotes.notes = notes;
+     this.eventAggregator.publish(chordNotes);
+
      this.selectedProgression.splice(sequence);
-     this.selectedProgression.push({triadIndex: triadIndex});
+     this.selectedProgression.push(
+       {
+         triadIndex: triadIndex,
+         notes: notes
+       }
+     );
      // Max 6 chords
      if (sequence < 5) {
        this.nextLeading(sequence, triadIndex);
@@ -147,32 +191,29 @@ export class Chords {
   }
 
  updateSelectedNotes() {
-   this.selectedNotes = {};
+   this.selectedNotes.clear();
     for (let triad of this.selectedProgression) {
-      for (let note of this.triads[triad.triadIndex].notes.notes) {
-        if (this.selectedNotes[note.name]) {
-          this.selectedNotes[note.name] += 1;
+      for (let note of triad.notes) {
+        if (this.selectedNotes.has(note.name)) {
+          let n = this.selectedNotes.get(note.name);
+          this.selectedNotes.set(note.name, n+1);
         } else {
-          this.selectedNotes[note.name] = 1;
+          this.selectedNotes.set(note.name, 1);
         }
       }
     }
-    for (let prop in this.selectedNotes) {
-      if (this.selectedNotes.hasOwnProperty(prop)) {
-         let count = this.selectedNotes[prop];
-         if (count >= 4) this.noteColor[prop] = 'danger';
-         else if (count === 3) this.noteColor[prop] = 'warning';
-         else if (count === 2) this.noteColor[prop] = 'info';
-         else this.noteColor[prop] = 'default';
-      }
-    }
+
+    this.selectedNotes = this.sortMap(this.selectedNotes);
  }
 
  resetLeading(index) {
     this.progressions = [];
     this.progressions.push([index]);
+    this.selectedProgression = [{
+      triadIndex: index,
+      notes: this.music.extendChord(this.triads[index])
+    }];
     this.nextLeading(0, index);
-    this.selectedProgression = [{triadIndex: index}];
   }
 
   nextLeading(sequenceNo, triadIndex) {
@@ -184,5 +225,17 @@ export class Chords {
     }
     this.progressions.splice(sequenceNo+1);
     this.progressions.push(nextChords);
+  }
+
+  sortMap(map) {
+    let newMap = new Map();
+    Array.from(map.keys())
+    .sort((a,b) => { return map.get(b) - map.get(a) })
+    .map(k => { return { key: k, value: map.get(k) }})
+    .reduce((prev, curr) => {
+      newMap.set(curr.key, curr.value);
+     }, newMap);
+
+    return newMap;
   }
 }
